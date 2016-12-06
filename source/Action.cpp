@@ -18,7 +18,7 @@ Action::Action( const IDType & unitIndex, const IDType & player, const IDType & 
     , _moveIndex(moveIndex)
     , _p(dest)
 {
-        
+        //comment
 }
 
 Action::Action( const IDType & unitIndex, const IDType & player, const IDType & type, const IDType & moveIndex)
