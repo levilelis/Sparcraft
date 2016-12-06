@@ -18,7 +18,7 @@ Action::Action( const IDType & unitIndex, const IDType & player, const IDType & 
     , _moveIndex(moveIndex)
     , _p(dest)
 {
-        //comment 1234
+        //comment 12
 }
 
 Action::Action( const IDType & unitIndex, const IDType & player, const IDType & type, const IDType & moveIndex)
