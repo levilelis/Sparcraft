@@ -1,0 +1,4 @@
+Player 0 PortfolioGreedySearch  0 NOKDPS  1 0
+Player 1 PortfolioGreedySearch  0 NOKDPS  1 1
+State SeparatedState 2 128 128 400 360 840 360 Protoss_Dragoon 2 Protoss_Zealot 2
+ResultsFile experiments/results/PortfolioGreedySearch_1_0_versus_PortfolioGreedySearch_1_1_Protoss_Dragoon2Protoss_Zealot2.txt true
