@@ -65,10 +65,11 @@
 #Player 0 UCT 5 1.6 5000 20 ScriptFirst Playout NOKDPS NOKDPS Alternate NOKDPS
 
 # Sample PortfolioGreedySearch Players
-Player 1 PortfolioGreedySearch 0 NOKDPS 1 0
-#Player 0 ImprovedPortfolioGreedySearch 0 NOKDPS 1 0
 #Player 1 PortfolioGreedySearch 0 NOKDPS 1 0
-Player 0 PortfolioOnlineEvolution 25 NOKDPS 1 0
+#Player 1 ImprovedPortfolioGreedySearch 0 NOKDPS 3 0
+Player 0 ImprovedPortfolioGreedySearch 0 NOKDPS 2 0
+#Player 1 PortfolioGreedySearch 0 NOKDPS 1 0
+Player 1 PortfolioOnlineEvolution 40 NOKDPS 1 0
 
 #Sample StratifiedPolicySearch Players
 #Player 1 StratifiedPolicySearch 1234 NOKDPS 5 1
