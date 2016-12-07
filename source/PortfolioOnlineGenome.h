@@ -34,12 +34,15 @@ class PortfolioOnlineGenome
 public:
 
     PortfolioOnlineGenome(const GameState & state);
+    PortfolioOnlineGenome(const GameState & state, const PortfolioOnlineGenome & p1, const PortfolioOnlineGenome & p2);
 
     void calculateMoves(const IDType & player, MoveArray & moves, GameState & state, std::vector<Action> & moveVec);
     void setUnitScript(const IDType & player, const int & id, const IDType & script);
     void setUnitScript(const Unit & unit, const IDType & script);
     void setFitness(const StateEvalScore & fitness);
     void mutate(const IDType & player, const GameState & state, std::vector<IDType> & portfolio);
+
+    void printScripts(const IDType & player, const GameState & state);
 
     const IDType &      getUnitScript(const IDType & player, const int & id) const;
     const IDType &      getUnitScript(const Unit & unit) const;

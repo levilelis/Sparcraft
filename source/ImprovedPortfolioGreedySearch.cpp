@@ -12,7 +12,7 @@ ImprovedPortfolioGreedySearch::ImprovedPortfolioGreedySearch(const IDType & play
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
-	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
+	//_playerScriptPortfolio.push_back(PlayerModels::Cluster);
 	//_playerScriptPortfolio.push_back(PlayerModels::AttackWeakest);
 }
 

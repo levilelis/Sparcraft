@@ -11,6 +11,7 @@ PortfolioOnlineEvolution::PortfolioOnlineEvolution(const IDType & player, const 
     , _timeLimit(timeLimit)
 	, _populationSize(30)
 	, _playoutLimit(25)
+	, _selectedMembers(4)
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
@@ -33,6 +34,50 @@ void PortfolioOnlineEvolution::mutatePopulation(const IDType & player, const Gam
 	{
 		gen_it->mutate(player, state, this->_playerScriptPortfolio);
 	}
+//	for(int i = 0; i < _selectedMembers; i++)
+//	{
+//		population[i].mutate(player, state, this->_playerScriptPortfolio);
+//	}
+}
+
+void PortfolioOnlineEvolution::crossover(const IDType & player, const GameState & state, std::vector<PortfolioOnlineGenome> & population)
+{
+	std::vector<PortfolioOnlineGenome> newPopulation;
+	for(int i = 0; i < _selectedMembers; i++)
+	{
+		newPopulation.push_back(population[i]);
+	}
+
+	for(int i = 0; i < _selectedMembers; i++)
+	{
+		for(int j = 0; j < _selectedMembers; j++)
+		{
+			if(i == j)
+			{
+				continue;
+			}
+
+			PortfolioOnlineGenome offspring(state, population[i], population[j]);
+			newPopulation.push_back(offspring);
+		}
+	}
+
+	population.clear();
+	population = newPopulation;
+}
+
+void PortfolioOnlineEvolution::evalPopulation(const IDType & player, const GameState & state, std::vector<PortfolioOnlineGenome> & population)
+{
+	const IDType enemyPlayer(state.getEnemy(player));
+
+	for(int i = 0; i < population.size(); i++)
+	{
+		Game g(state, 100);
+		_totalEvals++;
+		population[i].setFitness(g.playoutGenome(player, population[i], 4));
+	}
+
+	std::sort(population.begin(), population.end());
 }
 
 std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, const GameState & state)
@@ -50,11 +95,14 @@ std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, cons
 
     while(ms < this->_timeLimit)
     {
-    	mutatePopulation(player, state, population);
     	evalPopulation(player, state, population);
+    	mutatePopulation(player, state, population);
+    //	crossover(player, state, population);
 
     	ms = t.getElapsedTimeInMilliSec();
     }
+
+	evalPopulation(player, state, population);
 
     // convert the script vector into a move vector and return it
 	MoveArray moves;
@@ -155,23 +203,4 @@ IDType PortfolioOnlineEvolution::calculateInitialSeed(const IDType & player, con
     return bestScript;
 }*/
 
-void PortfolioOnlineEvolution::evalPopulation(const IDType & player, const GameState & state, std::vector<PortfolioOnlineGenome> & population)
-{
-	const IDType enemyPlayer(state.getEnemy(player));
 
-	for(int i = 0; i < population.size(); i++)
-	{
-		Game g(state, 100);
-		_totalEvals++;
-		population[i].setFitness(g.playoutGenome(player, population[i], 3));
-	}
-
-	std::sort(population.begin(), population.end());
-
-//	std::cout << "Printing population" << std::endl;
-//	for(int i = 0; i < population.size(); i++)
-//	{
-//		std::cout << population[i].getFitness().val() << "\t";
-//	}
-//	std::cout << std::endl;
-}
