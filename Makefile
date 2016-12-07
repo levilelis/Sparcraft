@@ -17,3 +17,6 @@ SparCraft:$(OBJECTS)
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
 .cc.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
+	
+clean:
+	rm -f $(OBJECTS)
