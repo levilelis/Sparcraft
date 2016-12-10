@@ -23,6 +23,8 @@
 #include "Player_Kiter_NOKDPS.h"
 #include "Player_Cluster.h"
 #include "Player_Random.h"
+#include "Player_MoveForward.h"
+#include "Player_MoveBackward.h"
 
 namespace SparCraft
 {

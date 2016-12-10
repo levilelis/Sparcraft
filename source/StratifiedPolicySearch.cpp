@@ -12,8 +12,9 @@ StratifiedPolicySearch::StratifiedPolicySearch(const IDType & player, const IDTy
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
-	//_playerScriptPortfolio.push_back(PlayerModels::Kiter_NOKDPS);
-	//_playerScriptPortfolio.push_back(PlayerModels::AttackWeakest);
+	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
+//	_playerScriptPortfolio.push_back(PlayerModels::Kiter_NOKDPS);
+//	_playerScriptPortfolio.push_back(PlayerModels::MoveBackward);
 }
 
 std::vector<Action> StratifiedPolicySearch::search(const IDType & player, const GameState & state)
@@ -39,7 +40,7 @@ std::vector<Action> StratifiedPolicySearch::search(const IDType & player, const 
     // do the initial root portfolio search for our player
     UnitScriptData currentScriptData(originalScriptData);
     doStratifiedSearch(player, state, currentScriptData);
-
+/*
     // iterate as many times as required
     for (size_t i(0); i<_responses; ++i)
     {
@@ -50,7 +51,7 @@ std::vector<Action> StratifiedPolicySearch::search(const IDType & player, const 
         // then do portfolio search again for us to improve vs. enemy's update
         doStratifiedSearch(player, state, currentScriptData);
     }
-
+*/
     // convert the script vector into a move vector and return it
 	MoveArray moves;
 	state.generateMoves(moves, player);
@@ -74,6 +75,74 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
     // the enemy of this player
     const IDType enemyPlayer(state.getEnemy(player));
     
+    for (size_t i(0); i<_iterations; ++i)
+    {
+	    //compute the set of type for each unit that can move
+	    std::set<StratType> types;
+        for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
+        {
+            const Unit & unit(state.getUnit(player, unitIndex));
+            StratType t(unit);
+            types.insert(t);
+        }
+
+        // set up data for best scripts
+        IDType          bestScriptVec[types.size()];
+	    StateEvalScore  bestScoreVec[types.size()];
+
+	    std::set<StratType>::iterator it = types.begin();
+        for(int typeIndex = 0; typeIndex < types.size(); typeIndex++, ++it)
+        {
+            for (size_t sIndex(0); sIndex<_playerScriptPortfolio.size(); ++sIndex)
+            {
+                for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
+                {
+                    if (_timeLimit > 0 && t.getElapsedTimeInMilliSec() > _timeLimit)
+                    {
+                        break;
+                    }
+
+                    const Unit & unit(state.getUnit(player, unitIndex));
+                    StratType t(unit);
+
+                    if(t == *it)
+                    {
+                        currentScriptData.setUnitScript(unit, _playerScriptPortfolio[sIndex]);
+                    }
+                }
+
+                StateEvalScore score = eval(player, state, currentScriptData);
+
+                // if we have a better score, set it
+                if (sIndex == 0 || score > bestScoreVec[typeIndex])
+                {
+                    bestScriptVec[typeIndex] = _playerScriptPortfolio[sIndex];
+                    bestScoreVec[typeIndex]  = score;
+                }
+            }
+
+            for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
+            {
+                const Unit & unit(state.getUnit(player, unitIndex));
+                StratType t(unit);
+
+                if(t == *it)
+                {
+                    currentScriptData.setUnitScript(unit, bestScriptVec[typeIndex]);
+                }
+            }
+        }
+    }   
+}
+/*
+void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData)
+{
+    Timer t;
+    t.start();
+
+    // the enemy of this player
+    const IDType enemyPlayer(state.getEnemy(player));
+
     for (size_t i(0); i<_iterations; ++i)
     {
         // set up data for best scripts
@@ -110,9 +179,9 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
             // set the current vector to the best move for use in future simulations
             currentScriptData.setUnitScript(unit, bestScriptVec[unitIndex]);
         }
-    }   
+    }
 }
-
+*/
 IDType StratifiedPolicySearch::calculateInitialSeed(const IDType & player, const GameState & state)
 {
     IDType bestScript;
@@ -155,11 +224,12 @@ StateEvalScore StratifiedPolicySearch::eval(const IDType & player, const GameSta
 
 	Game g(state, 100);
 
-    g.playIndividualScripts(playerScriptsChosen);
+    //g.playIndividualScripts(playerScriptsChosen);
 
     _totalEvals++;
+    return g.playLimitedIndividualScripts(player, playerScriptsChosen, 4);
 
-	return g.getState().eval(player, SparCraft::EvaluationMethods::LTD2);
+	//return g.getState().eval(player, SparCraft::EvaluationMethods::LTD2);
 }
 
 void  StratifiedPolicySearch::setAllScripts(const IDType & player, const GameState & state, UnitScriptData & data, const IDType & script)

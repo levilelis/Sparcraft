@@ -104,27 +104,29 @@ public:
 class PlayerModels : public EnumData<PlayerModels>
 {
 public:
-    enum { AlphaBeta, AdaptiveBeamAlphaBeta, AttackClosest, Kiter, Random, AttackWeakest, AttackDPS, KiterDPS, NOKDPS, Kiter_NOKDPS, Cluster, PortfolioGreedySearch, ImprovedPortfolioGreedySearch, UCT, StratifiedPolicySearch, PortfolioOnlineEvolution, None, Size };
+    enum { AlphaBeta, AdaptiveBeamAlphaBeta, AttackClosest, Kiter, Random, AttackWeakest, AttackDPS, KiterDPS, NOKDPS, Kiter_NOKDPS, Cluster, PortfolioGreedySearch, ImprovedPortfolioGreedySearch, UCT, StratifiedPolicySearch, PortfolioOnlineEvolution, MoveForward, MoveBackward, None, Size };
     static void init()
     {
         names.resize(Size);
-        setData(AlphaBeta,              "AlphaBeta");
-        setData(AdaptiveBeamAlphaBeta,  "AdaptiveBeamAlphaBeta");
-		setData(AttackClosest,          "AttackClosest");
-		setData(Kiter,                  "Kiter");
-		setData(Random,                 "Random");
-		setData(AttackWeakest,          "AttackWeakest");
-		setData(AttackDPS,              "AttackDPS");
-		setData(KiterDPS,               "KiterDPS");
-		setData(NOKDPS,                 "NOKDPS");
-        setData(Kiter_NOKDPS,           "Kiter_NOKDPS");
-        setData(Cluster,                "Cluster");
-        setData(PortfolioGreedySearch,  "PortfolioGreedySearch");
-        setData(PortfolioOnlineEvolution,  "PortfolioOnlineEvolution");
+        setData(AlphaBeta,              		"AlphaBeta");
+        setData(AdaptiveBeamAlphaBeta,  		"AdaptiveBeamAlphaBeta");
+		setData(AttackClosest,          		"AttackClosest");
+		setData(Kiter,                  		"Kiter");
+		setData(Random,                 		"Random");
+		setData(AttackWeakest,          		"AttackWeakest");
+		setData(AttackDPS,              		"AttackDPS");
+		setData(KiterDPS,               		"KiterDPS");
+		setData(NOKDPS,                 		"NOKDPS");
+        setData(Kiter_NOKDPS,           		"Kiter_NOKDPS");
+        setData(Cluster,                		"Cluster");
+        setData(PortfolioGreedySearch,  		"PortfolioGreedySearch");
+        setData(PortfolioOnlineEvolution,  		"PortfolioOnlineEvolution");
         setData(ImprovedPortfolioGreedySearch,  "ImprovedPortfolioGreedySearch");
-        setData(UCT,                    "UCT");
-        setData(StratifiedPolicySearch, "StratifiedPolicySearch");
-		setData(None,                   "None");
+        setData(UCT,                    		"UCT");
+        setData(StratifiedPolicySearch, 		"StratifiedPolicySearch");
+        setData(MoveForward, 					"MoveForward");
+        setData(MoveBackward, 					"MoveBackward");
+		setData(None,                   		"None");
     }
 };
 

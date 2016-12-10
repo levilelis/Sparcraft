@@ -173,14 +173,21 @@ const StateEvalScore Game::playoutGenome(const IDType & player, PortfolioOnlineG
     scriptMoves[Players::Player_One] = std::vector<Action>(state.numUnits(Players::Player_One));
     scriptMoves[Players::Player_Two] = std::vector<Action>(state.numUnits(Players::Player_Two));
 
+    scriptData.resetIterator();
     t.start();
 
     // play until there is no winner
     while (!gameOver())
     {
-        if ((rounds > limit) || (moveLimit && rounds > moveLimit))
+    	//std::cout << "Round: " << rounds << std::endl;
+        if ((rounds > 100) || (moveLimit && rounds > moveLimit))
         {
             break;
+        }
+
+        if(!scriptData.hasMoreMoves())
+        {
+        	break;
         }
 
         Timer frameTimer;
@@ -207,14 +214,16 @@ const StateEvalScore Game::playoutGenome(const IDType & player, PortfolioOnlineG
         state.generateMoves(moves[playerToMove], playerToMove);
 
         // calculate the moves the unit would do given its script preferences
-        scriptData.calculateMoves(playerToMove, moves[playerToMove], state, scriptMoves[playerToMove]);
+        //scriptData.calculateMoves(playerToMove, moves[playerToMove], state, scriptMoves[playerToMove]);
+        scriptData.calculateNextMoves(playerToMove, moves[playerToMove], state, scriptMoves[playerToMove]);
         
-	// if both players can move, generate the other player's moves
+        // if both players can move, generate the other player's moves
         if (state.bothCanMove())
         {
             state.generateMoves(moves[enemyPlayer], enemyPlayer);
 
-            scriptData.calculateMoves(enemyPlayer, moves[enemyPlayer], state, scriptMoves[enemyPlayer]);
+            //scriptData.calculateMoves(enemyPlayer, moves[enemyPlayer], state, scriptMoves[enemyPlayer]);
+            scriptData.calculateNextMoves(enemyPlayer, moves[enemyPlayer], state, scriptMoves[enemyPlayer]);
 
             state.makeMoves(scriptMoves[enemyPlayer]);
         }
@@ -228,7 +237,7 @@ const StateEvalScore Game::playoutGenome(const IDType & player, PortfolioOnlineG
 
     gameTimeMS = t.getElapsedTimeInMilliSec();
     //return state.eval(player, SparCraft::EvaluationMethods::Playout, PlayerModels::NOKDPS, PlayerModels::NOKDPS);
-    return state.evalSimLimited(player, PlayerModels::NOKDPS, PlayerModels::NOKDPS, 22);
+    return state.evalSimLimited(player, PlayerModels::NOKDPS, PlayerModels::NOKDPS, limit);
 }
 
 // play the game until there is a winner

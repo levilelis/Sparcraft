@@ -9,11 +9,13 @@
 #include "UnitProperties.h"
 #include "AnimationFrameData.h"
 #include <iostream>
+#include "StratType.h"
 
 namespace SparCraft
 {
 
 class Action;
+class StratType;
 
 class Unit 
 {

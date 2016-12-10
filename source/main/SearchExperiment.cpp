@@ -367,6 +367,31 @@ void SearchExperiment::addState(const std::string & line)
             addSeparatedState(unitVec, numUnitVec, cx1, cy1, cx2, cy2, xLimit, yLimit);
         }
     }
+    else if (strcmp(stateType.c_str(), "StateSymmetricVerticalLine") == 0)
+    {
+        int xLimit, yLimit;
+        iss >> xLimit;
+        iss >> yLimit;
+
+        std::vector<std::string> unitVec;
+        std::vector<int> numUnitVec;
+        std::string unitType;
+        int numUnits;
+
+        while (iss >> unitType)
+        {
+            iss >> numUnits;
+            unitVec.push_back(unitType);
+            numUnitVec.push_back(numUnits);
+        }
+
+        //std::cout << "\nAdding " << numStates <<  " Symmetric State(s)\n\n";
+
+        for (int s(0); s<numStates; ++s)
+        {
+            states.push_back(getSymmetricVerticalLineState(unitVec, numUnitVec, xLimit, yLimit));
+        }
+    }
     else
     {
         System::FatalError("Invalid State Type in Configuration File: " + stateType);
@@ -673,8 +698,8 @@ void SearchExperiment::addPlayer(const std::string & line)
         {
             params.addOrderedMoveScript(PlayerModels::NOKDPS);
             params.addOrderedMoveScript(PlayerModels::KiterDPS);
-            //params.addOrderedMoveScript(PlayerModels::Cluster);
-            //params.addOrderedMoveScript(PlayerModels::AttackWeakest);
+          //  params.addOrderedMoveScript(PlayerModels::Cluster);
+            params.addOrderedMoveScript(PlayerModels::AttackWeakest);
         }
 
         // set opponent modeling if it's not none
@@ -781,6 +806,45 @@ Position SearchExperiment::getRandomPosition(const PositionType & xlimit, const 
 	int y = ylimit - (rand.nextInt() % (2*ylimit));
 
 	return Position(x, y);
+}
+
+GameState SearchExperiment::getSymmetricVerticalLineState( std::vector<std::string> & unitTypes, std::vector<int> & numUnits,
+								                const PositionType & xLimit, const PositionType & yLimit)
+{
+	GameState state;
+
+    Position mid(640, 360);
+
+    //std::cout << "   Adding";
+
+    // for each unit type to add
+    for (size_t i(0); i<unitTypes.size(); ++i)
+    {
+        BWAPI::UnitType type;
+        for (const BWAPI::UnitType & t : BWAPI::UnitTypes::allUnitTypes())
+        {
+            if (t.getName().compare(unitTypes[i]) == 0)
+            {
+                type = t;
+                break;
+            }
+        }
+
+        // add the symmetric unit for each count in the numUnits Vector
+        for (int u(0); u<numUnits[i]; ++u)
+	    {
+            Position r(rand.nextInt() % 20, rand.nextInt() % 20);
+            Position u1(mid.x() + 212 + r.x(), mid.y() + u*20 + r.y());
+            Position u2(mid.x() - 212 + r.x(), mid.y() + u*20 + r.y());
+
+            state.addUnit(type, Players::Player_One, u1);
+            state.addUnit(type, Players::Player_Two, u2);
+	    }
+    }
+
+    //std::cout << std::endl;
+	state.finishedMoving();
+	return state;
 }
 
 GameState SearchExperiment::getSymmetricState( std::vector<std::string> & unitTypes, std::vector<int> & numUnits,

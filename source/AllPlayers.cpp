@@ -13,6 +13,8 @@ Player * AllPlayers::getPlayer(const IDType & playerID, const IDType & type)
     else if		(type == PlayerModels::Cluster)		    	{ return new Player_Cluster(playerID); }
 	else if		(type == PlayerModels::NOKDPS)              { return new Player_NOKDPS(playerID); }
 	else if		(type == PlayerModels::Random)				{ return new Player_Random(playerID); }
+	else if		(type == PlayerModels::MoveForward)			{ return new Player_MoveForward(playerID); }
+	else if		(type == PlayerModels::MoveBackward)		{ return new Player_MoveBackward(playerID); }
 	else													{ return NULL; }
 }
 
@@ -27,5 +29,7 @@ PlayerPtr AllPlayers::getPlayerPtr(const IDType & playerID, const IDType & type)
     else if		(type == PlayerModels::Cluster)		    	{ return PlayerPtr(new Player_Cluster(playerID)); }
 	else if		(type == PlayerModels::NOKDPS)              { return PlayerPtr(new Player_NOKDPS(playerID)); }
 	else if		(type == PlayerModels::Random)				{ return PlayerPtr(new Player_Random(playerID)); }
+	else if		(type == PlayerModels::MoveForward)			{ return PlayerPtr(new Player_MoveForward(playerID)); }
+	else if		(type == PlayerModels::MoveBackward)		{ return PlayerPtr(new Player_MoveBackward(playerID)); }
 	else													{ return PlayerPtr(new Player_NOKDPS(playerID)); }
 }

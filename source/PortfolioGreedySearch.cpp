@@ -12,7 +12,7 @@ PortfolioGreedySearch::PortfolioGreedySearch(const IDType & player, const IDType
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
-	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
+//	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
 }
 
 std::vector<Action> PortfolioGreedySearch::search(const IDType & player, const GameState & state)
