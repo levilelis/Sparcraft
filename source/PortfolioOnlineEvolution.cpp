@@ -9,10 +9,10 @@ PortfolioOnlineEvolution::PortfolioOnlineEvolution(const IDType & player, const 
     , _responses(responses)
     , _totalEvals(0)
     , _timeLimit(timeLimit)
-	, _populationSize(30)
+	, _populationSize(16)
 	, _playoutLimit(25)
-	, _selectedMembers(6)
-	, _offspringPerSelected(5)
+	, _selectedMembers(4)
+	, _offspringPerSelected(3)
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
@@ -34,7 +34,6 @@ void PortfolioOnlineEvolution::init(const IDType & player, const GameState & sta
 
 void PortfolioOnlineEvolution::mutatePopulation(const IDType & player, const GameState & state, std::vector<PortfolioOnlineGenome> & population)
 {
-	//for(int j = 0; j < _selectedMembers; j++)
 	std::vector<PortfolioOnlineGenome>  newPopulation;
 	//std::cout << "Population size before mutation: " << population.size() << " selected: " << _selectedMembers << std::endl;
 	for(int j = 0; j < population.size(); j++)
@@ -80,7 +79,8 @@ void PortfolioOnlineEvolution::crossover(const IDType & player, const GameState 
 			{
 				continue;
 			}
-			PortfolioOnlineGenome offspring(player, state, population[i], population[j]);
+
+			PortfolioOnlineGenome offspring(player, state, population[rand() % population.size()], population[rand() % population.size()]);
 			offspring.mutate(player, state, _playerScriptPortfolio);
 			newPopulation.push_back(offspring);
 		}
@@ -92,32 +92,14 @@ void PortfolioOnlineEvolution::crossover(const IDType & player, const GameState 
 void PortfolioOnlineEvolution::evalPopulation(const IDType & player, const GameState & state, std::vector<PortfolioOnlineGenome> & population)
 {
 	const IDType enemyPlayer(state.getEnemy(player));
-
-
-//	std::cout << "#####################################" << std::endl;
-
 	for(int i = 0; i < population.size(); i++)
 	{
-		//state.print(1);
 		Game g(state, 100);
 		_totalEvals++;
 		population[i].setFitness(g.playoutGenome(player, population[i], _playoutLimit));
-//		population[i].printScripts(player, state);
-//		std::cout << std::endl;
-//		std::cout << "Fitness: " << population[i].getFitness().val() << " ";
 	}
-
-//	std::cout << std::endl;
 
 	std::sort(population.begin(), population.end());
-
-//	std::cout << std::endl;
-/*	for(int i = 0; i < population.size(); i++)
-	{
-		std::cout << population[i].getFitness().val() << " ";
-	}
-	std::cout << std::endl;
-	*/
 }
 
 std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, const GameState & state)
@@ -143,17 +125,9 @@ std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, cons
     	ms = t.getElapsedTimeInMilliSec();
     }
 
-    ms = t.getElapsedTimeInMilliSec();
+//    ms = t.getElapsedTimeInMilliSec();
 //    printf("\nMove POE chosen in %lf ms\n", ms);
-    /*
-    _fileTime.open("POE.txt", std::ostream::app);
-    if (!_fileTime.is_open())
-    {
-    	std::cout << "ERROR Opening file" << std::endl;
-    }
-    _fileTime << ms << ", ";
-    _fileTime.close();
-*/
+
 	evalPopulation(player, state, population);
 
     // convert the script vector into a move vector and return it
