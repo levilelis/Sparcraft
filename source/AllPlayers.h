@@ -9,8 +9,10 @@
 #include "Player_AdaptiveBeamAlphaBeta.h"
 #include "Player_PortfolioGreedySearch.h"
 #include "Player_StratifiedPolicySearch.h"
+#include "Player_IRStratifiedPolicySearch.h"
 #include "Player_ImprovedPortfolioGreedySearch.h"
 #include "Player_PortfolioOnlineEvolution.h"
+#include "Player_AdaptableStratifiedPolicySearch.h"
 #include "Player_UCT.h"
 
 // script-based players

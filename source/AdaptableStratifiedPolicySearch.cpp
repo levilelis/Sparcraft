@@ -1,8 +1,8 @@
-#include "StratifiedPolicySearch.h"
+#include "AdaptableStratifiedPolicySearch.h"
 
 using namespace SparCraft;
 
-StratifiedPolicySearch::StratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit)
+AdaptableStratifiedPolicySearch::AdaptableStratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit)
 	: _player(player)
 	, _enemyScript(enemyScript)
 	, _iterations(iter)
@@ -17,59 +17,36 @@ StratifiedPolicySearch::StratifiedPolicySearch(const IDType & player, const IDTy
 //	_playerScriptPortfolio.push_back(PlayerModels::MoveBackward);
 }
 
-std::vector<Action> StratifiedPolicySearch::search(const IDType & player, const GameState & state)
+std::vector<Action> AdaptableStratifiedPolicySearch::search(const IDType & player, const GameState & state)
 {
     Timer t;
     t.start();
 
     const IDType enemyPlayer(state.getEnemy(player));
 
-    // calculate the seed scripts for each player
-    // they will be used to seed the initial root search
-//    IDType seedScript = calculateInitialSeed(player, state);
-//    IDType enemySeedScript = calculateInitialSeed(enemyPlayer, state);
-
     // set up the root script data
     UnitScriptData originalScriptData;
-//    setAllScripts(player, state, originalScriptData, seedScript);
-//    setAllScripts(enemyPlayer, state, originalScriptData, enemySeedScript);
     setAllScripts(player, state, originalScriptData, PlayerModels::NOKDPS);
     setAllScripts(enemyPlayer, state, originalScriptData, PlayerModels::NOKDPS);
 
-    double ms = t.getElapsedTimeInMilliSec();
-//    printf("\nFirst Part %lf ms\n", ms);
-
     // do the initial root portfolio search for our player
     UnitScriptData currentScriptData(originalScriptData);
+    int numberTypes;
+	double timePlayout;
 
-//    ms = t.getElapsedTimeInMilliSec();
-//    std::cout << "Before doing the search: " << ms << std::endl;
-    doStratifiedSearch(player, state, currentScriptData, t);
-/*
-    // iterate as many times as required
-    for (size_t i(0); i<_responses; ++i)
+    if(doStratifiedSearch(player, state, currentScriptData, t, numberTypes, timePlayout))
     {
-    	//printf("Response %lu \n", i+1);
-        // do the portfolio search to improve the enemy's scripts
-        doStratifiedSearch(enemyPlayer, state, currentScriptData);
-
-        // then do portfolio search again for us to improve vs. enemy's update
-        doStratifiedSearch(player, state, currentScriptData);
+    	//std::cout << "Types: " << numberTypes << " Time: " << timePlayout << std::endl;
+    	AdaptableStratType::increase(timePlayout, _timeLimit, _playerScriptPortfolio.size());
     }
-*/
-    ms = t.getElapsedTimeInMilliSec();
-
-/*
-    _fileTime.open("SPS.txt", std::ostream::app);
-    if (!_fileTime.is_open())
+    else
     {
-    	std::cout << "ERROR Opening file" << std::endl;
+    	//std::cout << "Types: " << numberTypes << " Time: " << timePlayout << std::endl;
+    	AdaptableStratType::decrease(numberTypes);
     }
-    _fileTime << ms << ", ";
-    _fileTime.close();
-*/
+
+//    double ms = t.getElapsedTimeInMilliSec();
 //    printf("\nMove SPS chosen in %lf ms\n", ms);
-
     // convert the script vector into a move vector and return it
 	MoveArray moves;
 	state.generateMoves(moves, player);
@@ -82,68 +59,56 @@ std::vector<Action> StratifiedPolicySearch::search(const IDType & player, const 
     return moveVec;
 }
 
-void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData, Timer & timer)
+bool AdaptableStratifiedPolicySearch::doStratifiedSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData, Timer & timer, int & numberTypes, double & timePlayouts)
 {
-   // Timer t;
-   // t.start();
-
 	int numberEvals = 0;
 
     // the enemy of this player
     const IDType enemyPlayer(state.getEnemy(player));
 
     //compute the set of type for each unit that can move
-    //std::set<StratType> types;
-    //std::map<Unit, StratType> unitTypes;
-    std::map<StratType, std::vector<size_t> > typeUnits;
+    std::map<AdaptableStratType, std::vector<size_t> > typeUnits;
     for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
     {
         const Unit & unit(state.getUnit(player, unitIndex));
-        StratType t(unit, state);
+        AdaptableStratType t(unit, state);
         if(typeUnits.find(t) == typeUnits.end())
         {
         	std::vector<size_t> v;
         	typeUnits[t] = v;
         }
         typeUnits[t].push_back(unitIndex);
-      //  types.insert(t);
-        //unitTypes[unit] = t;
     }
     
    // std::cout << "Number of types: " << typeUnits.size() << std::endl;
 
+    //number of types to be returned through parameter numberTypes
+    numberTypes = typeUnits.size();
+
+    bool hasFinishedIteration = false;
+    Timer t;
+    t.start();
     //for (size_t i(0); i<_iterations; ++i)
     while(timer.getElapsedTimeInMilliSec() < _timeLimit)
     {
         // set up data for best scripts
-       // IDType          bestScriptVec[types.size()];
-	   // StateEvalScore  bestScoreVec[types.size()];
     	IDType          bestScriptVec[typeUnits.size()];
     	StateEvalScore  bestScoreVec[typeUnits.size()];
 
-	    //std::set<StratType>::iterator it = types.begin();
-    	std::map<StratType, std::vector<size_t> >::iterator it = typeUnits.begin();
+    	std::map<AdaptableStratType, std::vector<size_t> >::iterator it = typeUnits.begin();
         for(int typeIndex = 0; typeIndex < typeUnits.size(); typeIndex++, ++it)
         {
             for (size_t sIndex(0); sIndex<_playerScriptPortfolio.size(); ++sIndex)
             {
-            	for(int j = 0; j < (it->second).size()/*typeUnits[*it].size()*/; j++)
+            	for(int j = 0; j < (it->second).size(); j++)
             	{
                     currentScriptData.setUnitScript(state.getUnit(player, (it->second)[j]), _playerScriptPortfolio[sIndex]);
             	}
-            	/*
-                for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
-                {
-                    const Unit & unit(state.getUnit(player, unitIndex));
-                    //StratType t(unit, state);
 
-                    if(unitTypes[unit] == *it)
-                    {
-                        currentScriptData.setUnitScript(unit, _playerScriptPortfolio[sIndex]);
-                    }
-                }*/
-
+              //  Timer t;
+              //  t.start();
                 StateEvalScore score = eval(player, state, currentScriptData);
+              //  std::cout << state.numUnits(player) << ": " << t.getElapsedTimeInMilliSec() << " ms." << std::endl;
                 numberEvals++;
 
                 // if we have a better score, set it
@@ -158,31 +123,25 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
         	{
                 currentScriptData.setUnitScript(state.getUnit(player, (it->second)[j]), bestScriptVec[typeIndex]);
         	}
-            /*
-            for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
-            {
-                const Unit & unit(state.getUnit(player, unitIndex));
-               // StratType t(unit, state);
-
-                if(unitTypes[unit] == *it)
-                {
-                    currentScriptData.setUnitScript(unit, bestScriptVec[typeIndex]);
-                }
-            }*/
 
             if (_timeLimit > 0 && timer.getElapsedTimeInMilliSec() > _timeLimit)
             {
-            //	std::cout << "Number evals: " << numberEvals << std::endl;
-            	return;
+            	//if(!hasFinishedIteration)
+            	//	std::cout << "UNABLE. Time: " << t.getElapsedTimeInMilliSec()
+				//			<< "Evals: "<< numberEvals << std::endl;
+            	timePlayouts = t.getElapsedTimeInMilliSec() / ((double) numberEvals);
+            	return hasFinishedIteration;
             }
         }
+
+        hasFinishedIteration = true;
     }
 
-    //std::cout << "Number evals (COMPLETE): " << numberEvals << std::endl;
-
+	timePlayouts = t.getElapsedTimeInMilliSec() / ((double) numberEvals);
+    return hasFinishedIteration;
 }
 
-IDType StratifiedPolicySearch::calculateInitialSeed(const IDType & player, const GameState & state)
+IDType AdaptableStratifiedPolicySearch::calculateInitialSeed(const IDType & player, const GameState & state)
 {
     IDType bestScript;
     StateEvalScore bestScriptScore;
@@ -218,7 +177,7 @@ IDType StratifiedPolicySearch::calculateInitialSeed(const IDType & player, const
     return bestScript;
 }
 
-StateEvalScore StratifiedPolicySearch::eval(const IDType & player, const GameState & state, UnitScriptData & playerScriptsChosen)
+StateEvalScore AdaptableStratifiedPolicySearch::eval(const IDType & player, const GameState & state, UnitScriptData & playerScriptsChosen)
 {
     const IDType enemyPlayer(state.getEnemy(player));
 
@@ -232,7 +191,7 @@ StateEvalScore StratifiedPolicySearch::eval(const IDType & player, const GameSta
 	//return g.getState().eval(player, SparCraft::EvaluationMethods::LTD2);
 }
 
-void  StratifiedPolicySearch::setAllScripts(const IDType & player, const GameState & state, UnitScriptData & data, const IDType & script)
+void  AdaptableStratifiedPolicySearch::setAllScripts(const IDType & player, const GameState & state, UnitScriptData & data, const IDType & script)
 {
     for (size_t unitIndex(0); unitIndex < state.numUnits(player); ++unitIndex)
     {

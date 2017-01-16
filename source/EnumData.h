@@ -104,7 +104,7 @@ public:
 class PlayerModels : public EnumData<PlayerModels>
 {
 public:
-    enum { AlphaBeta, AdaptiveBeamAlphaBeta, AttackClosest, Kiter, Random, AttackWeakest, AttackDPS, KiterDPS, NOKDPS, Kiter_NOKDPS, Cluster, PortfolioGreedySearch, ImprovedPortfolioGreedySearch, UCT, StratifiedPolicySearch, PortfolioOnlineEvolution, MoveForward, MoveBackward, None, Size };
+    enum { AlphaBeta, AdaptiveBeamAlphaBeta, AttackClosest, Kiter, Random, AttackWeakest, AttackDPS, KiterDPS, NOKDPS, Kiter_NOKDPS, Cluster, PortfolioGreedySearch, ImprovedPortfolioGreedySearch, UCT, StratifiedPolicySearch, AdaptableStratifiedPolicySearch, IRStratifiedPolicySearch, PortfolioOnlineEvolution, MoveForward, MoveBackward, None, Size };
     static void init()
     {
         names.resize(Size);
@@ -124,6 +124,8 @@ public:
         setData(ImprovedPortfolioGreedySearch,  "ImprovedPortfolioGreedySearch");
         setData(UCT,                    		"UCT");
         setData(StratifiedPolicySearch, 		"StratifiedPolicySearch");
+        setData(AdaptableStratifiedPolicySearch, 		"AdaptableStratifiedPolicySearch");
+        setData(IRStratifiedPolicySearch, 		"IRStratifiedPolicySearch");
         setData(MoveForward, 					"MoveForward");
         setData(MoveBackward, 					"MoveBackward");
 		setData(None,                   		"None");

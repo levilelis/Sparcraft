@@ -143,6 +143,17 @@ std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, cons
     	ms = t.getElapsedTimeInMilliSec();
     }
 
+    ms = t.getElapsedTimeInMilliSec();
+//    printf("\nMove POE chosen in %lf ms\n", ms);
+    /*
+    _fileTime.open("POE.txt", std::ostream::app);
+    if (!_fileTime.is_open())
+    {
+    	std::cout << "ERROR Opening file" << std::endl;
+    }
+    _fileTime << ms << ", ";
+    _fileTime.close();
+*/
 	evalPopulation(player, state, population);
 
     // convert the script vector into a move vector and return it
@@ -151,9 +162,6 @@ std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, cons
     std::vector<Action> moveVec;
     GameState copy(state);
     population[0].calculateMoves(player, moves, copy, moveVec);
-
-    ms = t.getElapsedTimeInMilliSec();
-    //printf("\nMove PGS chosen in %lf ms\n", ms);
 
     _totalEvals = 0;
 

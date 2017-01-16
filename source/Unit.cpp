@@ -1,4 +1,5 @@
 #include "Unit.h"
+#include "StratType.h"
 
 using namespace SparCraft;
 
@@ -97,6 +98,16 @@ const bool Unit::operator < (const Unit & rhs) const
     {
         return firstTimeFree() < rhs.firstTimeFree();
     }*/
+}
+
+void Unit::setStratType(StratType* t)
+{
+	this->_stratType = t;
+}
+
+StratType* Unit::getStratType()
+{
+	return this->_stratType;
 }
 
 // compares a unit based on unit id

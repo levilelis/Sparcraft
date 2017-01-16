@@ -30,6 +30,7 @@ protected:
     size_t						_playoutLimit;
     size_t						_selectedMembers;
     size_t						_offspringPerSelected;
+    std::ofstream				_fileTime;
 
     void						init(const IDType & player,const GameState & state, std::vector<PortfolioOnlineGenome> & population);
     void                        doPortfolioSearch(const IDType & player,const GameState & state,PortfolioOnlineGenome & currentData);

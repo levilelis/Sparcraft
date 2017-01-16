@@ -8,14 +8,13 @@
 #include "UnitScriptData.h"
 #include <memory>
 #include "StratType.h"
-#include <fstream>
 
 namespace SparCraft
 {
 	
 typedef	std::shared_ptr<Player> PlayerPtr;
 
-class StratifiedPolicySearch
+class IRStratifiedPolicySearch
 {
 protected:
 	
@@ -26,9 +25,9 @@ protected:
     std::vector<IDType>			_playerScriptPortfolio;
     size_t                      _totalEvals;
     size_t                      _timeLimit;
-    std::ofstream				_fileTime;
 
-    void                        doStratifiedSearch(const IDType & player,const GameState & state,UnitScriptData & currentData, Timer & timer);
+    StateEvalScore              doStratifiedSearch(const IDType & player,const GameState & state,UnitScriptData & currentData, const int & randomMax, Timer & timer);
+    void		                doStratifiedSearch2(const IDType & player,const GameState & state,UnitScriptData & currentData, const int & randomMax, Timer & timer);
     std::vector<Action>     	getMoveVec(const IDType & player,const GameState & state,const std::vector<IDType> & playerScripts);
     StateEvalScore              eval(const IDType & player,const GameState & state,UnitScriptData & playerScriptsChosen);
     IDType                      calculateInitialSeed(const IDType & player,const GameState & state);
@@ -36,7 +35,7 @@ protected:
 
 public:
 
-    StratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit);
+    IRStratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit);
     std::vector<Action> search(const IDType & player, const GameState & state);
 };
 

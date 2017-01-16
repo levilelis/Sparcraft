@@ -24,8 +24,9 @@ protected:
     std::vector<IDType>			_playerScriptPortfolio;
     size_t                      _totalEvals;
     size_t                      _timeLimit;
+    std::ofstream				_fileTime;
 
-    void                        doPortfolioSearch(const IDType & player,const GameState & state,UnitScriptData & currentData);
+    void                        doPortfolioSearch(const IDType & player,const GameState & state,UnitScriptData & currentData, Timer & t);
     std::vector<Action>     	getMoveVec(const IDType & player,const GameState & state,const std::vector<IDType> & playerScripts);
     StateEvalScore              eval(const IDType & player,const GameState & state,UnitScriptData & playerScriptsChosen);
     IDType                      calculateInitialSeed(const IDType & player,const GameState & state);

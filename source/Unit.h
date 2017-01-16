@@ -9,7 +9,7 @@
 #include "UnitProperties.h"
 #include "AnimationFrameData.h"
 #include <iostream>
-#include "StratType.h"
+//#include "StratType.h"
 
 namespace SparCraft
 {
@@ -19,6 +19,7 @@ class StratType;
 
 class Unit 
 {
+	StratType *_stratType;
     BWAPI::UnitType     _unitType;				// the BWAPI unit type that we are mimicing
     PositionType        _range;
 	
@@ -132,6 +133,9 @@ public:
 	// hash functions
 	const HashType          calculateHash(const size_t & hashNum, const TimeType & gameTime) const;
 	void                    debugHash(const size_t & hashNum, const TimeType & gameTime) const;
+
+	void					setStratType(StratType* t);
+	StratType*				getStratType();
 };
 
 class UnitPtrCompare

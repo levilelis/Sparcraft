@@ -12,7 +12,7 @@ PortfolioGreedySearch::PortfolioGreedySearch(const IDType & player, const IDType
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
-//	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
+	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
 }
 
 std::vector<Action> PortfolioGreedySearch::search(const IDType & player, const GameState & state)
@@ -37,18 +37,28 @@ std::vector<Action> PortfolioGreedySearch::search(const IDType & player, const G
 
     // do the initial root portfolio search for our player
     UnitScriptData currentScriptData(originalScriptData);
-    doPortfolioSearch(player, state, currentScriptData);
+    doPortfolioSearch(player, state, currentScriptData, t);
 
     // iterate as many times as required
     for (size_t i(0); i<_responses; ++i)
     {
         // do the portfolio search to improve the enemy's scripts
-        doPortfolioSearch(enemyPlayer, state, currentScriptData);
+        doPortfolioSearch(enemyPlayer, state, currentScriptData, t);
 
         // then do portfolio search again for us to improve vs. enemy's update
-        doPortfolioSearch(player, state, currentScriptData);
+        doPortfolioSearch(player, state, currentScriptData, t);
     }
 
+    ms = t.getElapsedTimeInMilliSec();
+/*
+    _fileTime.open("PGS.txt", std::ostream::app);
+    if (!_fileTime.is_open())
+    {
+    	std::cout << "ERROR Opening file" << std::endl;
+    }
+    _fileTime << ms << ", ";
+    _fileTime.close();
+*/
     // convert the script vector into a move vector and return it
 	MoveArray moves;
 	state.generateMoves(moves, player);
@@ -64,15 +74,16 @@ std::vector<Action> PortfolioGreedySearch::search(const IDType & player, const G
     return moveVec;
 }
 
-void PortfolioGreedySearch::doPortfolioSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData)
+void PortfolioGreedySearch::doPortfolioSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData, Timer & t)
 {
-    Timer t;
-    t.start();
+  //  Timer t;
+ //   t.start();
 
     // the enemy of this player
     const IDType enemyPlayer(state.getEnemy(player));
     
-    for (size_t i(0); i<_iterations; ++i)
+    while(t.getElapsedTimeInMilliSec() < _timeLimit)
+    //for (size_t i(0); i<_iterations; ++i)
     {
         // set up data for best scripts
         IDType          bestScriptVec[Constants::Max_Units];

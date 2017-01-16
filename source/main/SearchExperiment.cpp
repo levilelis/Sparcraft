@@ -292,6 +292,9 @@ void SearchExperiment::addState(const std::string & line)
     iss >> stateType;
     iss >> numStates;
 
+    std::cout << "\nAdding " << numStates <<  " State(s)\n\n";
+
+
     if (strcmp(stateType.c_str(), "StateSymmetric") == 0)
     { 
         int xLimit, yLimit;
@@ -310,7 +313,7 @@ void SearchExperiment::addState(const std::string & line)
             numUnitVec.push_back(numUnits);
         }
 
-        //std::cout << "\nAdding " << numStates <<  " Symmetric State(s)\n\n";
+     //   std::cout << "\nAdding " << numStates <<  " Symmetric State(s)\n\n";
 
         for (int s(0); s<numStates; ++s)
         {
@@ -552,6 +555,34 @@ void SearchExperiment::addPlayer(const std::string & line)
         iss >> responses;
 
         players[playerID].push_back(PlayerPtr(new Player_PortfolioGreedySearch(playerID, PlayerModels::getID(enemyPlayerModel), iterations, responses, timeLimit))); 
+    }
+    else if (playerModelID == PlayerModels::IRStratifiedPolicySearch)
+    {
+        std::string enemyPlayerModel;
+        size_t timeLimit(0);
+        int iterations(1);
+        int responses(0);
+
+        iss >> timeLimit;
+        iss >> enemyPlayerModel;
+        iss >> iterations;
+        iss >> responses;
+
+        players[playerID].push_back(PlayerPtr(new Player_IRStratifiedPolicySearch(playerID, PlayerModels::getID(enemyPlayerModel), iterations, responses, timeLimit)));
+    }
+    else if (playerModelID == PlayerModels::AdaptableStratifiedPolicySearch)
+    {
+        std::string enemyPlayerModel;
+        size_t timeLimit(0);
+        int iterations(1);
+        int responses(0);
+
+        iss >> timeLimit;
+        iss >> enemyPlayerModel;
+        iss >> iterations;
+        iss >> responses;
+
+        players[playerID].push_back(PlayerPtr(new Player_AdaptableStratifiedPolicySearch(playerID, PlayerModels::getID(enemyPlayerModel), iterations, responses, timeLimit)));
     }
     else if (playerModelID == PlayerModels::StratifiedPolicySearch)
     {

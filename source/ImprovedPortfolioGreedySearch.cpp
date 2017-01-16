@@ -36,20 +36,35 @@ std::vector<Action> ImprovedPortfolioGreedySearch::search(const IDType & player,
     setAllScripts(enemyPlayer, state, originalScriptData, enemySeedScript);
 
     double ms = t.getElapsedTimeInMilliSec();
+  //  printf("\nInitial part was run in %lf ms\n", ms);
+
 
     // do the initial root portfolio search for our player
     UnitScriptData currentScriptData(originalScriptData);
-    doPortfolioSearch(player, state, currentScriptData);
+    doPortfolioSearch(player, state, currentScriptData, t);
+
+    //std::cout << "Number responses: " << _responses << std::endl;
 
     // iterate as many times as required
     for (size_t i(0); i<_responses; ++i)
     {
         // do the portfolio search to improve the enemy's scripts
-        doPortfolioSearch(enemyPlayer, state, currentScriptData);
+        doPortfolioSearch(enemyPlayer, state, currentScriptData, t);
 
         // then do portfolio search again for us to improve vs. enemy's update
-        doPortfolioSearch(player, state, currentScriptData);
+        doPortfolioSearch(player, state, currentScriptData, t);
     }
+
+ //   ms = t.getElapsedTimeInMilliSec();
+ //   printf("\nMove IPGS chosen in %lf ms\n", ms);
+ /*   _fileTime.open("IPGS.txt", std::ostream::app);
+    if (!_fileTime.is_open())
+    {
+    	std::cout << "ERROR Opening file" << std::endl;
+    }
+    _fileTime << ms << ", ";
+    _fileTime.close();
+*/
     // convert the script vector into a move vector and return it
 	MoveArray moves;
 	state.generateMoves(moves, player);
@@ -57,23 +72,22 @@ std::vector<Action> ImprovedPortfolioGreedySearch::search(const IDType & player,
     GameState copy(state);
     currentScriptData.calculateMoves(player, moves, copy, moveVec);
 
-    ms = t.getElapsedTimeInMilliSec();
-    //printf("\nMove PGS chosen in %lf ms\n", ms);
-
     _totalEvals = 0;
 
     return moveVec;
 }
 
-void ImprovedPortfolioGreedySearch::doPortfolioSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData)
+void ImprovedPortfolioGreedySearch::doPortfolioSearch(const IDType & player, const GameState & state, UnitScriptData & currentScriptData, Timer & t)
 {
-    Timer t;
-    t.start();
+    //Timer t;
+    //t.start();
 
     // the enemy of this player
     const IDType enemyPlayer(state.getEnemy(player));
     
-    for (size_t i(0); i<_iterations; ++i)
+  //  size_t i(0);
+   // for (size_t i(0); i<_iterations; ++i)
+    while(t.getElapsedTimeInMilliSec() < _timeLimit)
     {
         // set up data for best scripts
         IDType          bestScriptVec[Constants::Max_Units];
@@ -112,6 +126,7 @@ void ImprovedPortfolioGreedySearch::doPortfolioSearch(const IDType & player, con
             //std::cout << (int) bestScriptVec[unitIndex] << "\t";
         }
         //std::cout << std::endl;
+       // std::cout << "Iteration: " << i++ << std::endl;
     }   
 }
 
