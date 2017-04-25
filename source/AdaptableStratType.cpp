@@ -5,6 +5,7 @@ using namespace SparCraft;
 
 int AdaptableStratType::_knob = 3;
 bool AdaptableStratType::_singleType = false;
+bool AdaptableStratType::_attackType = false;
 int AdaptableStratType::_counter = 0;
 std::vector<int> AdaptableStratType::_numberTypes;
 
@@ -14,6 +15,22 @@ AdaptableStratType::AdaptableStratType()
 	this->_hpLevel = -1;
 }
 
+void AdaptableStratType::printType()
+{
+	if(_singleType)
+	{
+		std::cout << -1 << std::endl;
+	}
+	else if(_attackType)
+	{
+		std::cout << 0 << std::endl;
+	}
+	else
+	{
+		std::cout << _knob + 1 << std::endl;
+	}
+}
+
 AdaptableStratType::AdaptableStratType(const Unit & unit, const GameState & state)
 {
 	if(_singleType)
@@ -21,8 +38,23 @@ AdaptableStratType::AdaptableStratType(const Unit & unit, const GameState & stat
 		this->_unitType = -1;
 		this->_hpLevel = -1;
 	}
+	else if(_attackType)
+	{
+		//if the unit is a Terran Marine or a Protoss Dragoon set it as ranged
+		if(unit.type().getID() == 0 || unit.type().getID() == 66)
+		{
+			this->_unitType = 0;
+		}
+		else
+		{
+			this->_unitType = 1;
+		}
+		this->_hpLevel = -1;
+	}
 	else
 	{
+		//std::cout << _knob << std::endl;
+
 		this->_unitType = unit.type();
 		if(_knob > 0)
 		{
@@ -48,51 +80,36 @@ void AdaptableStratType::print() const
 
 void AdaptableStratType::increase(float timePlayout, int timeLimit, int portfolioSize)
 {
-	//if(_counter > 0)
-	//{
-	//	_counter--;
-	//	return;
-	//}
-//	std::cout << "Knob: " << _knob << " Single? "<< _singleType << std::endl;
-
 	//if the number of types is empty then the type system is at its finest form
 	if(_numberTypes.empty())
 	{
 		return;
 	}
 
-	//std::cout << "INCREASE" << std::endl;
-	//if(!_numberTypes.empty())
-	//	std::cout << "Types: " << *(_numberTypes.rbegin()) << " Time: " << timePlayout << std::endl;
-
+	//estimating whether the search algorithm will be able to handle a finer type system
 	if(*(_numberTypes.rbegin()) * timePlayout * portfolioSize < timeLimit)
 	{
-//		std::cout << "INCREASING" << std::endl;
 		_numberTypes.erase(_numberTypes.end() - 1, _numberTypes.end());
 		if(_singleType)
 		{
 			_singleType = false;
 		}
-		else
+		else if(_attackType)
 		{
-			if(_knob < 3)
-			{
-				_knob++;
-			}
+			_attackType = false;
+		}
+		else if(_knob < 3)
+		{
+			_knob++;
 		}
 	}
-//	else
-//	{
-//		std::cout << "Can't increase, currently knob: " << _knob << std::endl;
-//	}
 }
+
 void AdaptableStratType::decrease(int numberTypes)
 {
-//	std::cout << "Knob: " << _knob << " Single? "<< _singleType << std::endl;
 	//if hasn't reached the coarsest type system
 	if(!_singleType)
 	{
-//		std::cout << "DECREASING" << std::endl;
 		_numberTypes.push_back(numberTypes);
 	}
 
@@ -100,10 +117,12 @@ void AdaptableStratType::decrease(int numberTypes)
 	{
 		_knob--;
 	}
+	else if(!_attackType)
+	{
+		_attackType = true;
+	}
 	else
 	{
 		_singleType = true;
 	}
-
-	//_counter = 20;
 }

@@ -16,7 +16,7 @@ PortfolioOnlineEvolution::PortfolioOnlineEvolution(const IDType & player, const 
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
-	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
+//	_playerScriptPortfolio.push_back(PlayerModels::Cluster);
 //	_playerScriptPortfolio.push_back(PlayerModels::MoveForward);
 //	_playerScriptPortfolio.push_back(PlayerModels::MoveBackward);
 
@@ -119,16 +119,16 @@ std::vector<Action> PortfolioOnlineEvolution::search(const IDType & player, cons
     {
     	evalPopulation(player, state, population);
     	select(player, state, population);
-   // 	mutatePopulation(player, state, population);
-    	crossover(player, state, population);
+    	mutatePopulation(player, state, population);
+   // 	crossover(player, state, population);
 
     	ms = t.getElapsedTimeInMilliSec();
     }
 
+	evalPopulation(player, state, population);
+
 //    ms = t.getElapsedTimeInMilliSec();
 //    printf("\nMove POE chosen in %lf ms\n", ms);
-
-	evalPopulation(player, state, population);
 
     // convert the script vector into a move vector and return it
 	MoveArray moves;

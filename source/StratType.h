@@ -23,8 +23,9 @@ private:
 
 public:
 
-	StratType(const Unit & unit, const GameState & state);
+//	StratType(const Unit & unit, const GameState & state);
 	StratType(const Unit & unit, const GameState & state, int maxRandom);
+	StratType(const Unit & unit, const GameState & state, int maxRandom, int hpLeveldiv);
 	StratType();
     bool operator==(const StratType & t) const;
     void print() const;

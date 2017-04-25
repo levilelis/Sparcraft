@@ -26,6 +26,7 @@ protected:
     std::vector<IDType>			_playerScriptPortfolio;
     size_t                      _totalEvals;
     size_t                      _timeLimit;
+    size_t						_hpLevelDiv;
     std::ofstream				_fileTime;
 
     void                        doStratifiedSearch(const IDType & player,const GameState & state,UnitScriptData & currentData, Timer & timer);
@@ -36,7 +37,7 @@ protected:
 
 public:
 
-    StratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit);
+    StratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit, const size_t & hpLevelDiv);
     std::vector<Action> search(const IDType & player, const GameState & state);
 };
 

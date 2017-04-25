@@ -55,8 +55,8 @@ std::vector<Action> ImprovedPortfolioGreedySearch::search(const IDType & player,
         doPortfolioSearch(player, state, currentScriptData, t);
     }
 
- //   ms = t.getElapsedTimeInMilliSec();
- //   printf("\nMove IPGS chosen in %lf ms\n", ms);
+//    ms = t.getElapsedTimeInMilliSec();
+//    printf("\nMove IPGS chosen in %lf ms\n", ms);
  /*   _fileTime.open("IPGS.txt", std::ostream::app);
     if (!_fileTime.is_open())
     {

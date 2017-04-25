@@ -10,19 +10,20 @@ Player_StratifiedPolicySearch::Player_StratifiedPolicySearch (const IDType & pla
 	_seed = PlayerModels::NOKDPS;
 }
 
-Player_StratifiedPolicySearch::Player_StratifiedPolicySearch (const IDType & playerID, const IDType & seed, const size_t & iter, const size_t & responses, const size_t & timeLimit)
+Player_StratifiedPolicySearch::Player_StratifiedPolicySearch (const IDType & playerID, const IDType & seed, const size_t & iter, const size_t & responses, const size_t & timeLimit, const size_t & hpLevelDiv)
 {
 	_playerID = playerID;
 	_iterations = iter;
     _responses = responses;
 	_seed = seed;
     _timeLimit = timeLimit;
+    _hpLevelDiv = hpLevelDiv;
 }
 
 void Player_StratifiedPolicySearch::getMoves(GameState & state, const MoveArray & moves, std::vector<Action> & moveVec)
 {
     moveVec.clear();
-	StratifiedPolicySearch pgs(_playerID, _seed, _iterations, _responses, _timeLimit);
+	StratifiedPolicySearch pgs(_playerID, _seed, _iterations, _responses, _timeLimit, _hpLevelDiv);
 
 	moveVec = pgs.search(_playerID, state);
 }

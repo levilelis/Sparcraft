@@ -36,11 +36,15 @@ std::vector<Action> AdaptableStratifiedPolicySearch::search(const IDType & playe
 
     if(doStratifiedSearch(player, state, currentScriptData, t, numberTypes, timePlayout))
     {
+    	std::cout << timePlayout << ", ";
+        AdaptableStratType::printType();
     	//std::cout << "Types: " << numberTypes << " Time: " << timePlayout << std::endl;
     	AdaptableStratType::increase(timePlayout, _timeLimit, _playerScriptPortfolio.size());
     }
     else
     {
+    	std::cout << timePlayout << ", ";
+        AdaptableStratType::printType();
     	//std::cout << "Types: " << numberTypes << " Time: " << timePlayout << std::endl;
     	AdaptableStratType::decrease(numberTypes);
     }
@@ -80,7 +84,7 @@ bool AdaptableStratifiedPolicySearch::doStratifiedSearch(const IDType & player, 
         typeUnits[t].push_back(unitIndex);
     }
     
-   // std::cout << "Number of types: " << typeUnits.size() << std::endl;
+    //std::cout << "Number of types: " << typeUnits.size() << std::endl;
 
     //number of types to be returned through parameter numberTypes
     numberTypes = typeUnits.size();
@@ -126,9 +130,6 @@ bool AdaptableStratifiedPolicySearch::doStratifiedSearch(const IDType & player, 
 
             if (_timeLimit > 0 && timer.getElapsedTimeInMilliSec() > _timeLimit)
             {
-            	//if(!hasFinishedIteration)
-            	//	std::cout << "UNABLE. Time: " << t.getElapsedTimeInMilliSec()
-				//			<< "Evals: "<< numberEvals << std::endl;
             	timePlayouts = t.getElapsedTimeInMilliSec() / ((double) numberEvals);
             	return hasFinishedIteration;
             }

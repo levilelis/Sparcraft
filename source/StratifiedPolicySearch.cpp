@@ -2,13 +2,14 @@
 
 using namespace SparCraft;
 
-StratifiedPolicySearch::StratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit)
+StratifiedPolicySearch::StratifiedPolicySearch(const IDType & player, const IDType & enemyScript, const size_t & iter, const size_t & responses, const size_t & timeLimit, const size_t & hpLevelDiv)
 	: _player(player)
 	, _enemyScript(enemyScript)
 	, _iterations(iter)
     , _responses(responses)
     , _totalEvals(0)
     , _timeLimit(timeLimit)
+	, _hpLevelDiv(hpLevelDiv)
 {
 	_playerScriptPortfolio.push_back(PlayerModels::NOKDPS);
 	_playerScriptPortfolio.push_back(PlayerModels::KiterDPS);
@@ -57,7 +58,7 @@ std::vector<Action> StratifiedPolicySearch::search(const IDType & player, const 
         doStratifiedSearch(player, state, currentScriptData);
     }
 */
-    ms = t.getElapsedTimeInMilliSec();
+ //   ms = t.getElapsedTimeInMilliSec();
 
 /*
     _fileTime.open("SPS.txt", std::ostream::app);
@@ -99,7 +100,7 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
     for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
     {
         const Unit & unit(state.getUnit(player, unitIndex));
-        StratType t(unit, state);
+        StratType t(unit, state, 0, _hpLevelDiv);
         if(typeUnits.find(t) == typeUnits.end())
         {
         	std::vector<size_t> v;
@@ -110,7 +111,7 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
         //unitTypes[unit] = t;
     }
     
-   // std::cout << "Number of types: " << typeUnits.size() << std::endl;
+    //std::cout << "Number of types: " << typeUnits.size() << std::endl;
 
     //for (size_t i(0); i<_iterations; ++i)
     while(timer.getElapsedTimeInMilliSec() < _timeLimit)
@@ -127,6 +128,12 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
         {
             for (size_t sIndex(0); sIndex<_playerScriptPortfolio.size(); ++sIndex)
             {
+                if (_timeLimit > 0 && timer.getElapsedTimeInMilliSec() > _timeLimit)
+                {
+                //	std::cout << "Number evals: " << numberEvals << std::endl;
+                	return;
+                }
+
             	for(int j = 0; j < (it->second).size()/*typeUnits[*it].size()*/; j++)
             	{
                     currentScriptData.setUnitScript(state.getUnit(player, (it->second)[j]), _playerScriptPortfolio[sIndex]);
@@ -169,12 +176,6 @@ void StratifiedPolicySearch::doStratifiedSearch(const IDType & player, const Gam
                     currentScriptData.setUnitScript(unit, bestScriptVec[typeIndex]);
                 }
             }*/
-
-            if (_timeLimit > 0 && timer.getElapsedTimeInMilliSec() > _timeLimit)
-            {
-            //	std::cout << "Number evals: " << numberEvals << std::endl;
-            	return;
-            }
         }
     }
 

@@ -156,7 +156,7 @@ void PortfolioOnlineGenome::calculateNextMoves(const IDType & player, MoveArray 
 {
 	if(player == _player && !hasMoreMoves())
 	{
-		System::FatalError("Trying tom compute more moves than there is available in current genome.");
+		System::FatalError("Trying to compute more moves than there is available in current genome.");
 	}
 
 	if(player == _player)

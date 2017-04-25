@@ -22,7 +22,6 @@ class UnitScriptData
     std::vector<IDType>     _scriptVec[2];
     std::vector<PlayerPtr>  _playerPtrVec[2];
     
-   
     std::vector<Action>       _allScriptMoves[2][PlayerModels::Size];
 
     std::vector<Action> & getMoves(const IDType & player, const IDType & actualScript);

@@ -21,6 +21,7 @@ private:
 	int _hpLevel;
 	static int _knob;
 	static bool _singleType;
+	static bool _attackType;
 	static int _counter;
 	static std::vector<int> _numberTypes;
 
@@ -32,6 +33,7 @@ public:
     void print() const;
     static void increase(float timePlayout, int timeLimit, int portfolioSize);
     static void decrease(int numberTypes);
+    static void printType();
 	bool friend operator<(const AdaptableStratType & t1, const AdaptableStratType & t2)
 	{
 		if(t1._unitType != t2._unitType)

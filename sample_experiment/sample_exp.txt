@@ -65,16 +65,17 @@
 #Player 0 UCT 20 1.6 5000 20 ScriptFirst Playout NOKDPS NOKDPS Alternate NOKDPS
 
 # Sample PortfolioGreedySearch Players
-#Player 1 PortfolioGreedySearch 40 NOKDPS 1 0
+Player 1 PortfolioGreedySearch 10 NOKDPS 1 0
 #Player 1 ImprovedPortfolioGreedySearch 0 NOKDPS 3 0
-#Player 0 ImprovedPortfolioGreedySearch 40 NOKDPS 1 0
+#Player 0 ImprovedPortfolioGreedySearch 20 NOKDPS 1 0
 #Player 0 PortfolioGreedySearch 0 NOKDPS 1 0
-#Player 0 PortfolioOnlineEvolution 40 NOKDPS 1 0
+Player 0 PortfolioOnlineEvolution 10 NOKDPS 1 0
 
 #Sample StratifiedPolicySearch Players
-Player 0 StratifiedPolicySearch 40 NOKDPS 1 0
-#Player 1 StratifiedPolicySearch 40 NOKDPS 1 0
-Player 1 AdaptableStratifiedPolicySearch 40 NOKDPS 1 0
+#Player 0 StratifiedPolicySearch 20 NOKDPS 1 0
+#Player 0 StratifiedPolicySearch 40 NOKDPS 1 0 1
+#Player 1 StratifiedPolicySearch 40 NOKDPS 1 0 -1
+#Player 1 AdaptableStratifiedPolicySearch 20 NOKDPS 1 0
 #Player 1 IRStratifiedPolicySearch 40 NOKDPS 1 0
 
 
@@ -115,8 +116,9 @@ Player 1 AdaptableStratifiedPolicySearch 40 NOKDPS 1 0
 
 # Sample SeparatedState States
 #State SeparatedState 100 128 128 400 360 840 360 Protoss_Zealot 32
-State SeparatedState 100 128 128 400 360 840 360 Protoss_Dragoon 14 Protoss_Zealot 14 Zerg_Zergling 14
-#State SeparatedState 100 128 128 400 360 840 360 Protoss_Dragoon 14 Protoss_Zealot 14 Zerg_Zergling 14 Terran_Marine 14
+#State SeparatedState 100 128 128 400 360 840 360 Protoss_Dragoon 14 Protoss_Zealot 14 Zerg_Zergling 14
+#State SeparatedState 100 128 128 400 360 840 360 Protoss_Dragoon 8 Protoss_Zealot 8 
+#Zerg_Zergling 14 Terran_Marine 14
 #State SeparatedState 800 128 128 400 360 840 360 Zerg_Zergling 15 Protoss_Dragoon 8
 #State SeparatedState 800 128 128 400 360 840 360 Protoss_Dragoon 32 Protoss_Zealot 32
 #State SeparatedState 1000 128 128 400 360 840 360 Protoss_Dragoon 4 Terran_Marine 4
@@ -132,7 +134,7 @@ State SeparatedState 100 128 128 400 360 840 360 Protoss_Dragoon 14 Protoss_Zeal
 #State StateSymmetric 10 128 128 Terran_Marine 16 Zerg_Zergling 16
 
 # Sample Symmetric Vertical Line States
-#State StateSymmetricVerticalLine 10 128 128 Protoss_Dragoon 16 Protoss_Zealot 16
+State StateSymmetricVerticalLine 10 128 128 Protoss_Dragoon 16 Protoss_Zealot 16
 #State StateSymmetricVerticalLine 10 128 128 Protoss_Dragoon 2 Protoss_Zealot 2
 #State StateSymmetricVerticalLine 100 128 128 Protoss_Dragoon 8 Protoss_Zealot 8
 
@@ -175,4 +177,4 @@ ResultsFile PATH_TO\sample_exp true
 ##################################################
 
 #Display true /home/levi/workspace/ualbertabot-master/SparCraft/starcraft_images/
-Display false ../starcraft_images/
+Display true ../starcraft_images/
