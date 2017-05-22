@@ -100,7 +100,8 @@ StateEvalScore IRStratifiedPolicySearch::doStratifiedSearch(const IDType & playe
     for (size_t unitIndex(0); unitIndex<state.numUnits(player); ++unitIndex)
     {
         const Unit & unit(state.getUnit(player, unitIndex));
-        StratType t(unit, state, randomMax);
+        //StratType t(unit, state, randomMax);
+        StratType t(unit, state);
         if(typeUnits.find(t) == typeUnits.end())
         {
         	std::vector<Unit> v;
